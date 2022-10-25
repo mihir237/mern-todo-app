@@ -17,6 +17,7 @@ function App() {
 
   const [values, setValues] = useState(initialValues)
   const [notes, setNotes] = useState([]);
+  const [update, setUpdate] = useState(false)
 
   const handleInputChange = (e) => {
     // console.log(e.target) // this return whole html input element 
@@ -43,10 +44,26 @@ function App() {
     setNotes(newNote);
   };
 
+  const handleEdit = (item) => {
+    console.log(item.title)
+    setValues({ ...item })
+    setUpdate(!update)
+  }
+
+  const handleUpdate = (e) => {
+    e.preventDefault();
+    const newNote = notes.map((item) => {
+      return item.id === values.id ? values : item
+    })
+    setNotes(newNote);
+    setValues(initialValues)
+  }
+
   return (
-    <div className="App">
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="floatingInput">Text 1</label>
+    <div className="container w-50 ">
+      <form onSubmit={!update ? handleSubmit : handleUpdate}>
+        <h1>Todo </h1>
+        <label htmlFor="floatingInput">Title</label>
         <input
           type="text"
           className="form-control"
@@ -56,8 +73,8 @@ function App() {
           name="title" //Important
           onChange={handleInputChange}
         />
-        <label htmlFor="floatingPassword">Text 2</label>
-        <input
+        <label htmlFor="floatingPassword">Description</label>
+        <textarea
           type="text"
           className="form-control"
           id="floatingInput"
@@ -66,10 +83,10 @@ function App() {
           name="desc" // Important
           onChange={handleInputChange}
         />
-        <button type="submit" disabled={!values.title.length > 0}>Submit</button>
+        <button className="btn btn-success mt-4" type="submit" disabled={!values.title.length > 0}>{!update ? "Add" : "Update"}</button>
       </form>
       <div>
-        <NoteList notes={notes} handleDelete={handleDelete} />
+        <NoteList notes={notes} handleDelete={handleDelete} handleEdit={handleEdit} />
       </div>
     </div>
   );
